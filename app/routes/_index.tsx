@@ -1,34 +1,40 @@
-import type { MetaFunction } from "@remix-run/node";
-import AudioPlayerVisualizer from "~/components/audio-visualizer";
+"use client";
 
-export const meta: MetaFunction = () => {
-  return [
-    { title: "Parker Jones" },
-    { name: "description", content: "parkerjones.io" },
-  ];
+import { useState, useEffect } from "react";
+import { AudioPlayer } from "~/components/audio-player";
+import { useAudioPlayer } from "~/hooks/use-audio-player";
+import { useInView } from "react-intersection-observer";
+import { myTrax } from "~/utils/tracks";
+
+export type Track = {
+  id: string;
+  title: string;
+  artist: string;
+  description: string;
+  audioSrc: string;
+  uploadDate: string;
 };
 
-export default function Index() {
+export default function Home() {
+  const { currentlyPlayingId, handlePlay } = useAudioPlayer();
+
   return (
-    <div className="flex flex-col min-h-screen bg-gray-950 px-3 py-12 font-mono">
-      <h1 className="text-4xl font-bold text-center text-white pt-6">Music</h1>
-      <div className="flex flex-col gap-3 mt-12">
-        <p className="text-xl font-bold underline text-white mb-3">
-          January 2025
-        </p>
-        <AudioPlayerVisualizer
-          audioSrc="/audio/testin_pistin_2.mp3"
-          colors={["#4d9dff", "#ff4d8e", "#ffd54d", "#681b98", "#00bdad"]}
-        />
-        <AudioPlayerVisualizer
-          audioSrc="/audio/testin_pistin_1.mp3"
-          colors={["#1f2942", "#3c4a68", "#4f7a92", "#a1d6d9", "#e53838"]}
-        />
-        <AudioPlayerVisualizer
-          audioSrc="/audio/housey_jame_riff.mp3"
-          colors={["#ff4d4d", "#ffcc4d", "#ffff4d", "#4dff4d", "#4dffff"]}
-        />
+    <div className="container mx-auto py-8">
+      <h1 className="mb-8 text-3xl font-bold">Music Blog</h1>
+      <div className="space-y-8">
+        {myTrax.map((track) => (
+          <AudioPlayer
+            key={track.id}
+            id={track.id}
+            title={track.title}
+            artist={track.artist}
+            description={track.description}
+            audioSrc={track.audioSrc}
+            onPlay={() => handlePlay(track.id)}
+          />
+        ))}
       </div>
+      {/* <div ref={ref} className="h-10" /> */}
     </div>
   );
 }
